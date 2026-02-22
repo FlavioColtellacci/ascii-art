@@ -1,0 +1,38 @@
+name: Run Tests
+
+on:
+  push:
+    branches:
+      - main
+      - "feat/**"
+      - "fix/**"
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Python Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install system dependencies (Tkinter + display)
+        run: |
+          sudo apt-get update -q
+          sudo apt-get install -y python3-tk xvfb
+
+      - name: Install Python dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pillow tkinterdnd2 pytest
+
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
